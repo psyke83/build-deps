@@ -1,0 +1,265 @@
+From patchwork Mon Jul 24 11:15:55 2023
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Evgeny Pavlov <lucenticus@gmail.com>
+X-Patchwork-Id: 42941
+Delivered-To: ffmpegpatchwork2@gmail.com
+Received: by 2002:a05:6a20:be1d:b0:130:ccc6:6c4b with SMTP id
+ ge29csp1847498pzb;
+        Mon, 24 Jul 2023 04:25:28 -0700 (PDT)
+X-Google-Smtp-Source: 
+ APBJJlHW8uvAwJNjD7UkjVIPR7cOMc87JOdgqTM8pqBfrS9lhBoIyoErN8PeWxeVqZCKr/i0BEiR
+X-Received: by 2002:a17:907:2cf7:b0:993:f8b2:d6fa with SMTP id
+ hz23-20020a1709072cf700b00993f8b2d6famr8182028ejc.21.1690197928032;
+        Mon, 24 Jul 2023 04:25:28 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1690197928; cv=none;
+        d=google.com; s=arc-20160816;
+        b=BeOLxiAWBiihATDA77NxPh739xkLdasiDdJ9m+iemU0Q2TImHKEZKIZQdgwgf1u+Vi
+         77roHX/+w0iKQkHD9HoCVHZav5LsREzPd0EZHoypJSa+gvPGo3URHQPXApjyqXmiqFSj
+         plEcuihw2LzgLiOcjha1nCaK6jY9nIaoyCcbIx6mQwKoYhhoE26NFa6wPVVZulGCvGo8
+         m5N6tuFy2o07VtT20hKsYc83aeKElPz0uMVL/DmePhdAR491IJPCj/P88nOmlwYz7tUO
+         g18eFNsu3/TiQfNyQx63KOcK00hRcd/Xa/CNC6+y7nO/QwqeGGFazLlZvec9xdDL2t+n
+         QNag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20160816;
+        h=sender:errors-to:content-transfer-encoding:cc:reply-to
+         :list-subscribe:list-help:list-post:list-archive:list-unsubscribe
+         :list-id:precedence:subject:mime-version:references:in-reply-to
+         :message-id:date:to:from:dkim-signature:delivered-to;
+        bh=79N8NJ6csTCs5MpAM+qzJRTTUz1WXjZoOVRSvhDmwjQ=;
+        fh=Ndx/gRzOmdOyvgGXHQQArUxv5ev+C0gUgbsopzrG/lI=;
+        b=RP/ZDCIFXzBxtWbl5wu+JyoH3YqSaxZHetrICDluCD+JIxUONpoukGqD+ITUaaTQjp
+         QWaapbVat37dW/tHFFmusoNpXWGbCIEIy140SAJaL0A6LBcej+nd7sXS9auFd6R92Sv0
+         UB83HTczNjSOCTM7bHic3zyuu+LvJAthqLXQzkvohTRBgCxVq4uQw6kryF4QDgJMidhI
+         Z/STlwPms7UoXhcLeLSJHzFJv9HDH/ekgjwPw5lmiDO0qTpDG/+xu8JtLv8U4goaHTyI
+         WrupHpFOR9RFcgQQ4mKvIeYPR1qU0YELAok/hmZaYykZkvcIMgZDukzeqWIMJ9WXR9ab
+         C+Tg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=neutral (body hash did not verify) header.i=@gmail.com
+ header.s=20221208 header.b=LbCnH35l;
+       spf=pass (google.com: domain of ffmpeg-devel-bounces@ffmpeg.org
+ designates 79.124.17.100 as permitted sender)
+ smtp.mailfrom=ffmpeg-devel-bounces@ffmpeg.org;
+       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Return-Path: <ffmpeg-devel-bounces@ffmpeg.org>
+Received: from ffbox0-bg.mplayerhq.hu (ffbox0-bg.ffmpeg.org. [79.124.17.100])
+        by mx.google.com with ESMTP id
+ l10-20020a1709061c4a00b00997e71d036csi6552807ejg.678.2023.07.24.04.25.27;
+        Mon, 24 Jul 2023 04:25:28 -0700 (PDT)
+Received-SPF: pass (google.com: domain of ffmpeg-devel-bounces@ffmpeg.org
+ designates 79.124.17.100 as permitted sender) client-ip=79.124.17.100;
+Authentication-Results: mx.google.com;
+       dkim=neutral (body hash did not verify) header.i=@gmail.com
+ header.s=20221208 header.b=LbCnH35l;
+       spf=pass (google.com: domain of ffmpeg-devel-bounces@ffmpeg.org
+ designates 79.124.17.100 as permitted sender)
+ smtp.mailfrom=ffmpeg-devel-bounces@ffmpeg.org;
+       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Received: from [127.0.1.1] (localhost [127.0.0.1])
+	by ffbox0-bg.mplayerhq.hu (Postfix) with ESMTP id 6BD6B68C739;
+	Mon, 24 Jul 2023 14:25:24 +0300 (EEST)
+X-Original-To: ffmpeg-devel@ffmpeg.org
+Delivered-To: ffmpeg-devel@ffmpeg.org
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com
+ [209.85.218.53])
+ by ffbox0-bg.mplayerhq.hu (Postfix) with ESMTPS id 58A1E68C57F
+ for <ffmpeg-devel@ffmpeg.org>; Mon, 24 Jul 2023 14:25:18 +0300 (EEST)
+Received: by mail-ej1-f53.google.com with SMTP id
+ a640c23a62f3a-977e0fbd742so684980166b.2
+ for <ffmpeg-devel@ffmpeg.org>; Mon, 24 Jul 2023 04:25:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20221208; t=1690197917; x=1690802717;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=bBWYAks6PlKPi5x0W1xwSneFVaKt7IvtF2RCJeWMxgE=;
+ b=LbCnH35lzxqe1bj6YXJPhBcev5yd0Jiay08xJOWZp4ecuf5SgdCs8Bmj4LIhSm/QGn
+ 2Mcq+797RwY6opI3HGf0duvEqvUDK4e5Cyig3gbPlHvfldr3UZtiUT/EeH8l/4hhJSiX
+ T4Qg2f9ajlXBx1XuPocBShmfOmowU1RG4Hq9cnBGQwm4X+Poe7kwX/kBrfXVAapwkEmu
+ a7tzwFucdAnKHAcmHklQLiiN6pijKDAH72mWRpjKzeuXY7Au2IeGVjLTsPIyPOGG8261
+ vW4uMW7AFukchxOAJev1lbFM7hKAkj/ek7FG9JYkvVPWk4yikp5I+Y6DuSHkRaG7sEMG
+ M3WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20221208; t=1690197917; x=1690802717;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=bBWYAks6PlKPi5x0W1xwSneFVaKt7IvtF2RCJeWMxgE=;
+ b=YR+ynoiIy9MA6bYUg1NzDfJPrtO9+mVP0zjv0X2Z10nEoaioHs8mPB/YVGKSt4JIrg
+ Cs0MnLvnrDPhAvm2vpsp5sZvgREWMb9pOfa+gvGA4vEw3PtoLKv5LPFaPULSZI4UIVV9
+ eRidKwI+AS6sAjgji4T3bBhc545AvuvCBwI7LA6gs3JsXoRiYE6O5cc3QlYBSD5lpeiY
+ O91poHXp2M4ohvUKb4adVZBPIW8PB34FTZjFpX76GqHpQ1j0lO/j2GX8pCixjDuULP/K
+ YThHhHFU1TQq9y4Ilh0b0d9SB3b7u+5N75Cr/AoXgYP5J2ZIddP+CvPUqZPX8f60ECeG
+ luNA==
+X-Gm-Message-State: ABy/qLZnLp8axdxa72CueYQEubPR4VneOQOpa5o1tffwwlH2h6TjqA8H
+ JhmjfOHB3W8fMUeulrcsXN00/ncFSFAU50jt
+X-Received: by 2002:a17:906:1c5:b0:988:fb2f:274e with SMTP id
+ 5-20020a17090601c500b00988fb2f274emr9019799ejj.27.1690197917042;
+ Mon, 24 Jul 2023 04:25:17 -0700 (PDT)
+Received: from MSDN-EVPAVLOV.amd.com (79-101-179-103.dynamic.isp.telekom.rs.
+ [79.101.179.103]) by smtp.gmail.com with ESMTPSA id
+ l2-20020a170906230200b00997e52cb30bsm6486455eja.121.2023.07.24.04.25.16
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 24 Jul 2023 04:25:16 -0700 (PDT)
+From: Evgeny Pavlov <lucenticus@gmail.com>
+To: ffmpeg-devel@ffmpeg.org
+Date: Mon, 24 Jul 2023 13:15:55 +0200
+Message-ID: <20230724112240.6999-2-lucenticus@gmail.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230720161720.25851-1-lucenticus@gmail.com>
+References: <20230720161720.25851-1-lucenticus@gmail.com>
+MIME-Version: 1.0
+Subject: [FFmpeg-devel] [PATCH,
+ v2] avcodec/amfenc: add smart access video option
+X-BeenThere: ffmpeg-devel@ffmpeg.org
+X-Mailman-Version: 2.1.29
+Precedence: list
+List-Id: FFmpeg development discussions and patches <ffmpeg-devel.ffmpeg.org>
+List-Unsubscribe: <https://ffmpeg.org/mailman/options/ffmpeg-devel>,
+ <mailto:ffmpeg-devel-request@ffmpeg.org?subject=unsubscribe>
+List-Archive: <https://ffmpeg.org/pipermail/ffmpeg-devel>
+List-Post: <mailto:ffmpeg-devel@ffmpeg.org>
+List-Help: <mailto:ffmpeg-devel-request@ffmpeg.org?subject=help>
+List-Subscribe: <https://ffmpeg.org/mailman/listinfo/ffmpeg-devel>,
+ <mailto:ffmpeg-devel-request@ffmpeg.org?subject=subscribe>
+Reply-To: FFmpeg development discussions and patches <ffmpeg-devel@ffmpeg.org>
+Cc: Evgeny Pavlov <lucenticus@gmail.com>
+Errors-To: ffmpeg-devel-bounces@ffmpeg.org
+Sender: "ffmpeg-devel" <ffmpeg-devel-bounces@ffmpeg.org>
+X-TUID: zO+NGrUp1llD
+
+This commit adds option for enabling SmartAccess Video (SAV)
+in AMF encoders. SAV is an AMD hardware-specific feature which
+enables the parallelization of encode and decode streams across
+multiple Video Codec Engine (VCN) hardware instances.
+
+Signed-off-by: Evgeny Pavlov <lucenticus@gmail.com>
+---
+Changes in v2:
+ - Enable low latency mode when smart access video explicitly enabled 
+ - Set default value for SAV to -1 (auto)
+
+ libavcodec/amfenc.h      |  1 +
+ libavcodec/amfenc_av1.c  | 17 +++++++++++++++++
+ libavcodec/amfenc_h264.c | 17 +++++++++++++++++
+ libavcodec/amfenc_hevc.c | 17 +++++++++++++++++
+ 4 files changed, 52 insertions(+)
+
+diff --git a/libavcodec/amfenc.h b/libavcodec/amfenc.h
+index 2dbd378ef8..e8d66164ed 100644
+--- a/libavcodec/amfenc.h
++++ b/libavcodec/amfenc.h
+@@ -89,6 +89,7 @@ typedef struct AmfContext {
+     int                 quality;
+     int                 b_frame_delta_qp;
+     int                 ref_b_frame_delta_qp;
++    int                 smart_access_video;
+ 
+     // Dynamic options, can be set after Init() call
+ 
+diff --git a/libavcodec/amfenc_av1.c b/libavcodec/amfenc_av1.c
+index 30c0a9fad2..d22d86ccd7 100644
+--- a/libavcodec/amfenc_av1.c
++++ b/libavcodec/amfenc_av1.c
+@@ -104,6 +104,8 @@ static const AVOption options[] = {
+ 
+     { "log_to_dbg",     "Enable AMF logging to debug output",   OFFSET(log_to_dbg), AV_OPT_TYPE_BOOL,{.i64 = 0 }, 0, 1, VE },
+ 
++    { "smart_access_video",     "Enable Smart Access Video",                OFFSET(smart_access_video),             AV_OPT_TYPE_BOOL, {.i64 = -1  }, -1, 1, VE},
++
+     //Pre Analysis options
+     { "preanalysis",                            "Enable preanalysis",                                           OFFSET(preanalysis),                            AV_OPT_TYPE_BOOL,   {.i64 = -1 }, -1, 1, VE },
+ 
+@@ -241,6 +243,21 @@ FF_ENABLE_DEPRECATION_WARNINGS
+         }
+     }
+ 
++    if (ctx->smart_access_video != -1) {
++        AMF_ASSIGN_PROPERTY_BOOL(res, ctx->encoder, AMF_VIDEO_ENCODER_AV1_ENABLE_SMART_ACCESS_VIDEO, ctx->smart_access_video != 0);
++        if (res != AMF_OK) {
++            av_log(avctx, AV_LOG_ERROR, "The Smart Access Video is not supported by AMF.\n");
++            return AVERROR(EINVAL);
++        } else {
++            av_log(avctx, AV_LOG_INFO, "The Smart Access Video (%d) is set.\n", ctx->smart_access_video);
++            // Set low latency mode if Smart Access Video is enabled
++            if (ctx->smart_access_video != 0) {
++                AMF_ASSIGN_PROPERTY_BOOL(res, ctx->encoder, AMF_VIDEO_ENCODER_AV1_ENCODING_LATENCY_MODE, AMF_VIDEO_ENCODER_AV1_ENCODING_LATENCY_MODE_LOWEST_LATENCY);
++                av_log(avctx, AV_LOG_INFO, "The Smart Access Video set low latency mode.\n");
++            }
++        }
++    }
++
+     // Pre-Pass, Pre-Analysis, Two-Pass
+     if (ctx->rate_control_mode == AMF_VIDEO_ENCODER_AV1_RATE_CONTROL_METHOD_CONSTANT_QP) {
+         AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_AV1_RATE_CONTROL_PREENCODE, 0);
+diff --git a/libavcodec/amfenc_h264.c b/libavcodec/amfenc_h264.c
+index 2380aa4e90..de08d9a7cc 100644
+--- a/libavcodec/amfenc_h264.c
++++ b/libavcodec/amfenc_h264.c
+@@ -136,6 +136,8 @@ static const AVOption options[] = {
+ 
+     { "log_to_dbg",     "Enable AMF logging to debug output",   OFFSET(log_to_dbg)    , AV_OPT_TYPE_BOOL, { .i64 = 0 }, 0, 1, VE },
+ 
++    { "smart_access_video",     "Enable Smart Access Video",    OFFSET(smart_access_video), AV_OPT_TYPE_BOOL, {.i64 = -1  }, -1, 1, VE},
++
+     //Pre Analysis options
+     { "preanalysis",                            "Enable preanalysis",                                           OFFSET(preanalysis),                            AV_OPT_TYPE_BOOL,   {.i64 = -1 }, -1, 1, VE },
+ 
+@@ -353,6 +355,21 @@ FF_ENABLE_DEPRECATION_WARNINGS
+         av_log(ctx, AV_LOG_WARNING, "rate control mode is PEAK_CONSTRAINED_VBR but rc_max_rate is not set\n");
+     }
+ 
++    if (ctx->smart_access_video != -1) {
++        AMF_ASSIGN_PROPERTY_BOOL(res, ctx->encoder, AMF_VIDEO_ENCODER_ENABLE_SMART_ACCESS_VIDEO, ctx->smart_access_video != 0);
++        if (res != AMF_OK) {
++            av_log(avctx, AV_LOG_ERROR, "The Smart Access Video is not supported by AMF.\n");
++            return AVERROR(EINVAL);
++        }else {
++            av_log(avctx, AV_LOG_INFO, "The Smart Access Video (%d) is set.\n", ctx->smart_access_video);
++            // Set low latency mode if Smart Access Video is enabled
++            if (ctx->smart_access_video != 0) {
++                AMF_ASSIGN_PROPERTY_BOOL(res, ctx->encoder, AMF_VIDEO_ENCODER_LOWLATENCY_MODE, true);
++                av_log(avctx, AV_LOG_INFO, "The Smart Access Video set low latency mode.\n");
++            }
++        }
++    }
++
+     if (ctx->preanalysis != -1) {
+         AMF_ASSIGN_PROPERTY_BOOL(res, ctx->encoder, AMF_VIDEO_ENCODER_PRE_ANALYSIS_ENABLE, !!((ctx->preanalysis == 0) ? false : true));
+     }
+diff --git a/libavcodec/amfenc_hevc.c b/libavcodec/amfenc_hevc.c
+index dd232cc8ac..19e22923be 100644
+--- a/libavcodec/amfenc_hevc.c
++++ b/libavcodec/amfenc_hevc.c
+@@ -99,6 +99,8 @@ static const AVOption options[] = {
+ 
+     { "log_to_dbg",     "Enable AMF logging to debug output",   OFFSET(log_to_dbg), AV_OPT_TYPE_BOOL,{ .i64 = 0 }, 0, 1, VE },
+ 
++    { "smart_access_video",     "Enable Smart Access Video",        OFFSET(smart_access_video), AV_OPT_TYPE_BOOL, {.i64 = -1  }, -1, 1, VE},
++
+     //Pre Analysis options
+     { "preanalysis",                            "Enable preanalysis",                                           OFFSET(preanalysis),                            AV_OPT_TYPE_BOOL,   {.i64 = -1 }, -1, 1, VE },
+ 
+@@ -241,6 +243,21 @@ FF_ENABLE_DEPRECATION_WARNINGS
+         }
+     }
+ 
++    if (ctx->smart_access_video != -1) {
++        AMF_ASSIGN_PROPERTY_BOOL(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_ENABLE_SMART_ACCESS_VIDEO, ctx->smart_access_video != 0);
++        if (res != AMF_OK) {
++            av_log(avctx, AV_LOG_ERROR, "The Smart Access Video is not supported by AMF.\n");
++            return AVERROR(EINVAL);
++        } else {
++            av_log(avctx, AV_LOG_INFO, "The Smart Access Video (%d) is set.\n", ctx->smart_access_video);
++            // Set low latency mode if Smart Access Video is enabled
++            if (ctx->smart_access_video != 0) {
++                AMF_ASSIGN_PROPERTY_BOOL(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_LOWLATENCY_MODE, true);
++                av_log(avctx, AV_LOG_INFO, "The Smart Access Video set low latency mode.\n");
++            }
++        }
++    }
++
+     // Pre-Pass, Pre-Analysis, Two-Pass
+     if (ctx->rate_control_mode == AMF_VIDEO_ENCODER_HEVC_RATE_CONTROL_METHOD_CONSTANT_QP) {
+         AMF_ASSIGN_PROPERTY_INT64(res, ctx->encoder, AMF_VIDEO_ENCODER_HEVC_PREENCODE_ENABLE, 0);

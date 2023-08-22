@@ -1,0 +1,149 @@
+From patchwork Tue Jul 18 07:33:43 2023
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Evgeny Pavlov <lucenticus@gmail.com>
+X-Patchwork-Id: 42800
+Delivered-To: ffmpegpatchwork2@gmail.com
+Received: by 2002:a05:6a20:b813:b0:130:ccc6:6c4b with SMTP id
+ fi19csp334672pzb;
+        Tue, 18 Jul 2023 01:32:27 -0700 (PDT)
+X-Google-Smtp-Source: 
+ APBJJlG9pwd35rTtGbIuJISZVU67dRl1FW/rnci6OLZxIyvvI2vDWHt1WFxqVFhGj8ClVkqKufiF
+X-Received: by 2002:a17:906:3f09:b0:992:33ba:2eb4 with SMTP id
+ c9-20020a1709063f0900b0099233ba2eb4mr10425958ejj.71.1689669147262;
+        Tue, 18 Jul 2023 01:32:27 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1689669147; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ZOH0e+x1JBKMuoOGnzPGBOWc8BRQ4bvtenWk8yir0rNEfC4x3I9+E7JLtix1VpwtPw
+         Dz7A+wi22jK8OeZfzHYFdb1b/y5fHNk7RdBzJDwXvOKOASxcm+JJjWjGQ0uM32qreE9/
+         VbgSuS22XqXEqry0tYACL2ONpk6sLNSMJu8qDEXbb7X25zqb7dZwM6y/qyn1M5kq8K/P
+         o6oKjhYv5cn+T187K55Dtv/BvBoMV25UlQXOJtodZQmypQh/zU3C1SMlPfbzhOZuXbNB
+         V2Uh+NExQhDfGcYot8q3xUvDzqzht/ozJTRZ+67eNoCCKEZRTkG/JSUhhSE2cv97Yx86
+         uLRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20160816;
+        h=sender:errors-to:content-transfer-encoding:cc:reply-to
+         :list-subscribe:list-help:list-post:list-archive:list-unsubscribe
+         :list-id:precedence:subject:mime-version:message-id:date:to:from
+         :dkim-signature:delivered-to;
+        bh=FjTLCNDmvX6o3qXDLRp+rGl0f4QXbxoYfb4OGDTK9rA=;
+        fh=Ndx/gRzOmdOyvgGXHQQArUxv5ev+C0gUgbsopzrG/lI=;
+        b=h3QvF+dd9RfhR/pdiLFyH3VT3Snpo6C4hTlBpY+EETphwg9EbgBvElqwNLEqtANZL3
+         +MWXcPp5dMAcWssCDnDNZNh5uwL+CiJVa8VgS7JM08PlAZaRD9LDkWj5kMV6NfMGJg5g
+         ObYyxZIAXQq5Q1ivaMdQ/5X8TMHQ2AzURIimmgMj8p/j39aoYvxPNjqV+GhlJUshbxWK
+         z7CsaxGziaFViFFmhfY/TOTPVo8JufoR/DLK5DsIp8e8iDOnBcuJuQC4NAWE66VWHvao
+         x8wNSISgPTj00pEj+zQWdYkdQLZU43HXiFjoz2xc1fwp5lX0QOTTmwutbyoMBzqXthlB
+         0TQQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=neutral (body hash did not verify) header.i=@gmail.com
+ header.s=20221208 header.b=nNAt6Quk;
+       spf=pass (google.com: domain of ffmpeg-devel-bounces@ffmpeg.org
+ designates 79.124.17.100 as permitted sender)
+ smtp.mailfrom=ffmpeg-devel-bounces@ffmpeg.org;
+       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Return-Path: <ffmpeg-devel-bounces@ffmpeg.org>
+Received: from ffbox0-bg.mplayerhq.hu (ffbox0-bg.ffmpeg.org. [79.124.17.100])
+        by mx.google.com with ESMTP id
+ r7-20020a170906c28700b00992a096678fsi850241ejz.813.2023.07.18.01.32.26;
+        Tue, 18 Jul 2023 01:32:27 -0700 (PDT)
+Received-SPF: pass (google.com: domain of ffmpeg-devel-bounces@ffmpeg.org
+ designates 79.124.17.100 as permitted sender) client-ip=79.124.17.100;
+Authentication-Results: mx.google.com;
+       dkim=neutral (body hash did not verify) header.i=@gmail.com
+ header.s=20221208 header.b=nNAt6Quk;
+       spf=pass (google.com: domain of ffmpeg-devel-bounces@ffmpeg.org
+ designates 79.124.17.100 as permitted sender)
+ smtp.mailfrom=ffmpeg-devel-bounces@ffmpeg.org;
+       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Received: from [127.0.1.1] (localhost [127.0.0.1])
+	by ffbox0-bg.mplayerhq.hu (Postfix) with ESMTP id 379E768C3CB;
+	Tue, 18 Jul 2023 11:32:24 +0300 (EEST)
+X-Original-To: ffmpeg-devel@ffmpeg.org
+Delivered-To: ffmpeg-devel@ffmpeg.org
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com
+ [209.85.218.46])
+ by ffbox0-bg.mplayerhq.hu (Postfix) with ESMTPS id 3B00B68C2EC
+ for <ffmpeg-devel@ffmpeg.org>; Tue, 18 Jul 2023 11:32:18 +0300 (EEST)
+Received: by mail-ej1-f46.google.com with SMTP id
+ a640c23a62f3a-98e011f45ffso667781366b.3
+ for <ffmpeg-devel@ffmpeg.org>; Tue, 18 Jul 2023 01:32:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20221208; t=1689669137; x=1690273937;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=wrSXP1uFlr8PepXHT2rW0RBmL3V8RkTCvXR+DbZs3Oo=;
+ b=nNAt6QukukXVhGbsgw05Gaoibc/rMQrZl7tGqNhAgd1mbMgymwHvwfl1c9+ZJC/qLU
+ DlVLk3V8qaoJfVtncbk0aUxaGQ/0UropPOGSlH9ggw5haVSO8JlEE2WU7CDyTNIYUMmu
+ 5zmf+D97zc8FBdBFJru82qnVX1N0cf9wf4R/xqSxypyXIDobK65ftcKcpTQUEyY/QZCd
+ ud51YhkFiUA526HL+wHpaiT60JaZd+uaHIOchUGbgalcfppT3uLKqaveHFGcJ473pILF
+ J8OFMMF6u1ixtbh/5OJwOWHaLr3/cCH/FDAMaaa/jh7ur+i8FFGhShKg7jIl1PkEIzu6
+ V2Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20221208; t=1689669137; x=1690273937;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=wrSXP1uFlr8PepXHT2rW0RBmL3V8RkTCvXR+DbZs3Oo=;
+ b=UvpyeXuJRGCoRBQYVNCcdvO3oMEChbttgnt950H7KWcx180pkLfe/8PayODgVm+mJ8
+ l+/R3ixAk+23S9i6lq9qiU7iZSlBOIje1yOUbJOz3rc15tZD6jMhGW8m8MZDranddqas
+ vAmrGKDaHZmu7OzhXq05QazDxJ27EUnAf5hwkXqzB9nBDQ1VnmkYhQzZdtnHQtnhg+yW
+ oFpa4m+Lb/1thFrKqKj8LLpXgh2XBMIqauTcHlOCMJO2x9eL+GBdcIcwPYJtBb7QbkUU
+ bOL8X37StR5WClpq7YGn1YSUTJeb5MwflptW7Xbe3qZXweFr4jTp2iInScVqmCdbIQi8
+ 8sfA==
+X-Gm-Message-State: ABy/qLYcfA1f1gDho4QoEonTkd0h9KAU9qnk4GdZVm58HGU1dC3+7wmE
+ tm+3ifjkN2oXrKpbSE3WYF/qlxOoP4ixJq3a2Jo=
+X-Received: by 2002:a17:906:13c1:b0:993:d8a2:385 with SMTP id
+ g1-20020a17090613c100b00993d8a20385mr10863520ejc.22.1689669137027;
+ Tue, 18 Jul 2023 01:32:17 -0700 (PDT)
+Received: from localhost.localdomain (109-93-182-113.dynamic.isp.telekom.rs.
+ [109.93.182.113]) by smtp.gmail.com with ESMTPSA id
+ gs19-20020a170906f19300b00992f81122e1sm735778ejb.21.2023.07.18.01.32.16
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 18 Jul 2023 01:32:16 -0700 (PDT)
+From: Evgeny Pavlov <lucenticus@gmail.com>
+To: ffmpeg-devel@ffmpeg.org
+Date: Tue, 18 Jul 2023 10:33:43 +0300
+Message-Id: <20230718073343.2060-1-lucenticus@gmail.com>
+X-Mailer: git-send-email 2.37.3.windows.1
+MIME-Version: 1.0
+Subject: [FFmpeg-devel] [PATCH] libavcodec/amfenc: Add more pixel formats
+ support
+X-BeenThere: ffmpeg-devel@ffmpeg.org
+X-Mailman-Version: 2.1.29
+Precedence: list
+List-Id: FFmpeg development discussions and patches <ffmpeg-devel.ffmpeg.org>
+List-Unsubscribe: <https://ffmpeg.org/mailman/options/ffmpeg-devel>,
+ <mailto:ffmpeg-devel-request@ffmpeg.org?subject=unsubscribe>
+List-Archive: <https://ffmpeg.org/pipermail/ffmpeg-devel>
+List-Post: <mailto:ffmpeg-devel@ffmpeg.org>
+List-Help: <mailto:ffmpeg-devel-request@ffmpeg.org?subject=help>
+List-Subscribe: <https://ffmpeg.org/mailman/listinfo/ffmpeg-devel>,
+ <mailto:ffmpeg-devel-request@ffmpeg.org?subject=subscribe>
+Reply-To: FFmpeg development discussions and patches <ffmpeg-devel@ffmpeg.org>
+Cc: Evgeny Pavlov <lucenticus@gmail.com>
+Errors-To: ffmpeg-devel-bounces@ffmpeg.org
+Sender: "ffmpeg-devel" <ffmpeg-devel-bounces@ffmpeg.org>
+X-TUID: FJ/1Ja5SqRSF
+
+This commit adds BGRA, RGBA and ARGB pixel formats for AMF encoders
+
+Signed-off-by: Evgeny Pavlov <lucenticus@gmail.com>
+---
+ libavcodec/amfenc.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/libavcodec/amfenc.c b/libavcodec/amfenc.c
+index cb48f8c273..234cd012ef 100644
+--- a/libavcodec/amfenc.c
++++ b/libavcodec/amfenc.c
+@@ -74,6 +74,9 @@ static const FormatMap format_map[] =
+     { AV_PIX_FMT_NV12,       AMF_SURFACE_NV12 },
+     { AV_PIX_FMT_BGR0,       AMF_SURFACE_BGRA },
+     { AV_PIX_FMT_RGB0,       AMF_SURFACE_RGBA },
++    { AV_PIX_FMT_BGRA,       AMF_SURFACE_BGRA },
++    { AV_PIX_FMT_RGBA,       AMF_SURFACE_RGBA },
++    { AV_PIX_FMT_ARGB,       AMF_SURFACE_ARGB },
+     { AV_PIX_FMT_GRAY8,      AMF_SURFACE_GRAY8 },
+     { AV_PIX_FMT_YUV420P,    AMF_SURFACE_YUV420P },
+     { AV_PIX_FMT_YUYV422,    AMF_SURFACE_YUY2 },
